@@ -1,0 +1,69 @@
+{{- $root := . -}}
+{{- $services := list
+  (dict "name" "suggestion-service" "config" .Values.services.suggestion "env" (list (dict "name" "INDEX_BUILDER_URL" "value" "http://index-builder-worker:8080")))
+  (dict "name" "query-analytics-service" "config" .Values.services.analytics "env" (list (dict "name" "DATABASE_URL" "value" (printf "postgres://%s@postgres:5432/%s" .Values.postgres.username .Values.postgres.database)) (dict "name" "SEED_SAMPLE_DATA" "value" "true")))
+  (dict "name" "index-builder-worker" "config" .Values.services.indexBuilder "env" (list (dict "name" "DATABASE_URL" "value" (printf "postgres://%s@postgres:5432/%s" .Values.postgres.username .Values.postgres.database)) (dict "name" "QUERY_ANALYTICS_URL" "value" "http://query-analytics-service:8080") (dict "name" "REFRESH_SECONDS" "value" (.Values.services.indexBuilder.refreshSeconds | toString))))
+  (dict "name" "web-frontend" "config" .Values.services.frontend "env" (list))
+-}}
+{{- range $service := $services }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $service.name }}
+  labels: { app.kubernetes.io/name: {{ $service.name }}, app.kubernetes.io/part-of: search-autocomplete }
+spec:
+  replicas: {{ $service.config.replicas }}
+  selector:
+    matchLabels: { app.kubernetes.io/name: {{ $service.name }} }
+  template:
+    metadata:
+      labels: { app.kubernetes.io/name: {{ $service.name }}, app.kubernetes.io/part-of: search-autocomplete }
+    spec:
+      containers:
+        - name: {{ $service.name }}
+          image: "{{ $service.config.image }}:{{ $root.Values.imageTag }}"
+          imagePullPolicy: {{ $root.Values.imagePullPolicy }}
+{{- if ne $service.name "web-frontend" }}
+          ports: [{ name: http, containerPort: 8080 }]
+          readinessProbe:
+            httpGet: { path: /healthz, port: http }
+            initialDelaySeconds: 3
+            periodSeconds: 4
+          livenessProbe:
+            httpGet: { path: /healthz, port: http }
+            initialDelaySeconds: 12
+            periodSeconds: 10
+{{- else }}
+          ports: [{ name: http, containerPort: 80 }]
+          readinessProbe:
+            httpGet: { path: /, port: http }
+            initialDelaySeconds: 2
+            periodSeconds: 4
+          livenessProbe:
+            httpGet: { path: /, port: http }
+            initialDelaySeconds: 10
+            periodSeconds: 10
+{{- end }}
+{{- if $service.env }}
+          env:
+{{- range $env := $service.env }}
+            - name: {{ $env.name }}
+              value: {{ $env.value | quote }}
+{{- end }}
+{{- end }}
+          resources:
+            {{- toYaml $service.config.resources | nindent 12 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $service.name }}
+  labels: { app.kubernetes.io/name: {{ $service.name }}, app.kubernetes.io/part-of: search-autocomplete }
+spec:
+  selector: { app.kubernetes.io/name: {{ $service.name }} }
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http
+{{- end }}

@@ -1,0 +1,39 @@
+nameOverride: ""
+namespace: search-autocomplete
+imageTag: dev
+imagePullPolicy: IfNotPresent
+clusterDns: 10.96.0.10
+postgres:
+  image: postgres:17-alpine
+  database: search_autocomplete
+  username: autocomplete
+  storage: 2Gi
+  resources:
+    requests: { cpu: 100m, memory: 128Mi }
+    limits: { cpu: "1", memory: 512Mi }
+services:
+  suggestion:
+    replicas: 2
+    image: search-autocomplete/suggestion-service
+    resources:
+      requests: { cpu: 50m, memory: 64Mi }
+      limits: { cpu: 500m, memory: 384Mi }
+  analytics:
+    replicas: 2
+    image: search-autocomplete/query-analytics-service
+    resources:
+      requests: { cpu: 50m, memory: 64Mi }
+      limits: { cpu: 500m, memory: 384Mi }
+  indexBuilder:
+    replicas: 2
+    image: search-autocomplete/index-builder-worker
+    refreshSeconds: 15
+    resources:
+      requests: { cpu: 50m, memory: 64Mi }
+      limits: { cpu: 500m, memory: 384Mi }
+  frontend:
+    replicas: 2
+    image: search-autocomplete/web-frontend
+    resources:
+      requests: { cpu: 50m, memory: 64Mi }
+      limits: { cpu: 500m, memory: 384Mi }

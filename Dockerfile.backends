@@ -1,0 +1,24 @@
+FROM rust:1.90-bookworm AS build
+WORKDIR /workspace
+COPY Cargo.toml Cargo.lock ./
+COPY suggestion-service ./suggestion-service
+COPY query-analytics-service ./query-analytics-service
+COPY index-builder-worker ./index-builder-worker
+RUN cargo build --release --workspace
+
+FROM debian:bookworm-slim AS runtime-base
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates && rm -rf /var/lib/apt/lists/*
+USER 10001:10001
+EXPOSE 8080
+
+FROM runtime-base AS suggestion-service
+COPY --from=build /workspace/target/release/suggestion-service /usr/local/bin/service
+ENTRYPOINT ["/usr/local/bin/service"]
+
+FROM runtime-base AS query-analytics-service
+COPY --from=build /workspace/target/release/query-analytics-service /usr/local/bin/service
+ENTRYPOINT ["/usr/local/bin/service"]
+
+FROM runtime-base AS index-builder-worker
+COPY --from=build /workspace/target/release/index-builder-worker /usr/local/bin/service
+ENTRYPOINT ["/usr/local/bin/service"]

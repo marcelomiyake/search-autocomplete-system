@@ -1,0 +1,6 @@
+apiVersion: v2
+name: search-autocomplete
+description: Local educational search autocomplete system
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
