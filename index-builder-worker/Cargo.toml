@@ -1,0 +1,25 @@
+[package]
+name = "index-builder-worker"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[package.metadata.sonar]
+organization = "marcelomiyake"
+project-key = "marcelomiyake_search-autocomplete-system_index-builder-worker"
+inclusions = ["**/*.rs"]
+exclusions = ["target/**"]
+
+[dependencies]
+axum.workspace = true
+reqwest.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sqlx.workspace = true
+tokio.workspace = true
+tower-http.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+
+[dev-dependencies]
+tower.workspace = true
