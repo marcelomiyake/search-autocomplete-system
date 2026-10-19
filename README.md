@@ -87,13 +87,13 @@ Open the app at [http://127.0.0.1:4173](http://127.0.0.1:4173). A local deployme
 
 ## OpenDesign workflow
 
-OpenDesign was launched from its local source checkout with Corepack pnpm 10.33.2, and its agent selector was set to GPT-6-Luna. The Home workflow uses a native folder picker. This environment's UI automation could open the picker but could not interact with its native dialog, so `web-frontend` is not selected as the OpenDesign working directory. To complete that step, open OpenDesign Home, choose **Working directory → Choose folder**, and select this repository's `web-frontend` directory. The OpenDesign selector exposed no `max` reasoning-effort option.
+[OpenDesign](https://github.com/nexu-io/open-design) is the design-time tool for frontend changes. To use it with this repository, open OpenDesign Home, choose **Working directory → Choose folder**, and select `web-frontend`. The initial build did not complete an OpenDesign session for `web-frontend`.
 
 ## SonarQube and JEV
 
 The [per-service GitHub Actions workflow](.github/workflows/sonarcloud-microservices.yml) starts a separate SonarQube Cloud analysis for each backend service on pushes to `main`, imports its Rust coverage report, and reads the repository secret `SONAR_TOKEN`. See the [project map and verification guide](docs/verification/sonarqube.md) for project keys and checks.
 
-The JEV rubric, probability distribution, confidence, model, date, and evidence scope belong in `docs/verification/jev-readiness.md`. JEV is advisory and is not a release gate. Its input must contain sanitized design and test evidence, not source code, credentials, or raw query data.
+[JEV](https://docs.typesafe.ai/introduction/coding-agents) is TypeSafe's model for typed rubric scores with probability distributions and confidence; here it rates sanitized design and test evidence. The JEV rubric, probability distribution, confidence, model, date, and evidence scope belong in `docs/verification/jev-readiness.md`. JEV is advisory and is not a release gate. Its input must contain sanitized design and test evidence, not source code, credentials, or raw query data.
 
 ## Project structure
 
