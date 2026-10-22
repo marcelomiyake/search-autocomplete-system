@@ -1,0 +1,11 @@
+{
+  "policy": "Use a Sonar project for each real component; retain existing aggregate history.",
+  "projects": [
+    {
+      "component": "web-frontend",
+      "directory": "web-frontend",
+      "key": "marcelomiyake_search-autocomplete-system_web-frontend",
+      "kind": "web"
+    }
+  ]
+}
