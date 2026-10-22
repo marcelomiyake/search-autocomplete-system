@@ -31,7 +31,7 @@ jobs:
       id: prepare
       run: |-
         cd web-frontend
-        pnpm install --frozen-lockfile
+        pnpm install --frozen-lockfile --ignore-scripts
         pnpm run test:coverage
         cd "$GITHUB_WORKSPACE"
     - name: Analyze web-frontend
