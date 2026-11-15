@@ -1,6 +1,6 @@
 FROM node:26.13.1-alpine AS build
 WORKDIR /app
-RUN npm install -g --no-fund --no-audit corepack@0.36.0 && corepack enable && corepack prepare pnpm@10.33.2 --activate
+RUN npm install -g --ignore-scripts --no-fund --no-audit corepack@0.36.0 && corepack enable && corepack prepare pnpm@10.33.2 --activate
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY index.html vite.config.ts tsconfig.json ./
 COPY src ./src
