@@ -8,6 +8,7 @@ Evidence was recorded on 2026-09-25 from the local working tree based on `4379d5
 - [`sonarqube.md`](sonarqube.md): GitHub-triggered per-service Cloud coverage and quality-gate results, plus historical local-instance results.
 - [`local-kind.md`](local-kind.md): local Kind environment, deployment, tests, API acceptance, and screenshot provenance.
 - [`lighthouse.md`](lighthouse.md): browser quality scores and a manual SEO META in 1 CLICK checklist audit.
+- [`dependency-update-2026-11-15.md`](dependency-update-2026-11-15.md): Node 26.13.1 and dependency security updates.
 
 All verification is local. It does not demonstrate production capacity, production availability, or a measured 100 ms response time.
 
